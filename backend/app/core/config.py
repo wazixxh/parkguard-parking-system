@@ -36,7 +36,7 @@ class Settings(BaseSettings):
         return ["http://localhost:5173", "http://127.0.0.1:5173"]
 
     # Initial Super Admin Bootstrap Credentials
-    INITIAL_ADMIN_EMAIL: str = "admin@parkguard.local"
+    INITIAL_ADMIN_EMAIL: str = "admin@parkguard.com"
     INITIAL_ADMIN_NAME: str = "Super Administrator"
     INITIAL_ADMIN_PASSWORD: str = "Admin@ParkGuard2026!"
     

@@ -1,0 +1,200 @@
+{
+  "info": {
+    "name": "ParkGuard Parking Management & Barcode System API",
+    "_postman_id": "b3e02931-1049-43c2-8418-2026parkguard",
+    "description": "Comprehensive Postman test collection for ParkGuard FastAPI Backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health & Readiness",
+      "item": [
+        {
+          "name": "System Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/health"
+          }
+        },
+        {
+          "name": "Readiness Probe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/ready"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Super Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@parkguard.com\",\n  \"password\": \"Admin@ParkGuard2026!\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Get Current Authenticated User",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Vehicles",
+      "item": [
+        {
+          "name": "Register Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plate_number\": \"ABC-1234\",\n  \"vehicle_type\": \"car\",\n  \"make\": \"Toyota\",\n  \"model\": \"Camry\",\n  \"color\": \"Silver\",\n  \"owner_name\": \"John Doe\",\n  \"owner_phone\": \"+1-555-0100\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/vehicles"
+          }
+        },
+        {
+          "name": "List Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/vehicles?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Printable Card Metadata",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}/card"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. QR / Barcode Scanner",
+      "item": [
+        {
+          "name": "Validate Credential",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"ABC-1234\",\n  \"scan_type\": \"manual\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/scanner/validate"
+          }
+        },
+        {
+          "name": "Scan History",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/scanner/history?limit=50"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Parking Operations",
+      "item": [
+        {
+          "name": "Record Vehicle Entry",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicle_identifier\": \"ABC-1234\",\n  \"entry_method\": \"qr_scan\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/parking/entry"
+          }
+        },
+        {
+          "name": "Currently Parked Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/parking/parked"
+          }
+        },
+        {
+          "name": "Record Vehicle Exit",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicle_identifier\": \"ABC-1234\",\n  \"exit_method\": \"qr_scan\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/parking/exit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard & Reports",
+      "item": [
+        {
+          "name": "Dashboard Live Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/dashboard/stats"
+          }
+        },
+        {
+          "name": "Export Vehicles CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/reports/export-csv?report_type=vehicles"
+          }
+        }
+      ]
+    }
+  ]
+}

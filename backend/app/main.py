@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.config import settings
 from app.core.logging import setup_logging, logger
-from app.core.database import check_db_connection
+from app.core.database import SessionLocal, check_db_connection
+from app.services.bootstrap_service import init_db
 from app.middleware.error_handler import (
     http_exception_handler,
     validation_exception_handler,
@@ -23,11 +24,17 @@ setup_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan manager for startup and shutdown routines."""
+    """Application lifespan manager for startup, DB initialization, and shutdown."""
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION} [{settings.ENVIRONMENT}]")
     db_connected = check_db_connection()
     if db_connected:
         logger.info("Database connectivity verified.")
+        # Bootstrap schema, super admin, and initial data
+        db = SessionLocal()
+        try:
+            init_db(db)
+        finally:
+            db.close()
     else:
         logger.warning("Database connection could not be established at startup.")
     yield
@@ -58,7 +65,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
-# Root level health and readiness shortcuts (as specified in Section 14)
+# Root level health and readiness shortcuts
 app.add_api_route("/health", health_check, methods=["GET"], tags=["Health"])
 app.add_api_route("/ready", readiness_check, methods=["GET"], tags=["Health"])
 
