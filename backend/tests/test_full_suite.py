@@ -312,3 +312,92 @@ def test_password_change_flow():
     })
     assert new_login.status_code == 200
 
+
+# 9. System Settings Management & RBAC
+def test_system_settings_rbac_and_update():
+    # Login as admin
+    admin_login = client.post("/api/v1/auth/login", json={
+        "email": settings.INITIAL_ADMIN_EMAIL,
+        "password": settings.INITIAL_ADMIN_PASSWORD
+    })
+    admin_token = admin_login.json()["access_token"]
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+
+    # Fetch settings
+    res = client.get("/api/v1/settings", headers=admin_headers)
+    assert res.status_code == 200
+    settings_data = res.json()
+    assert "settings" in settings_data
+    assert settings_data["settings"]["organization_name"] == "ParkGuard Campus Facilities"
+    assert settings_data["settings"]["timezone"] == "UTC"
+
+    # Update settings
+    update_res = client.patch("/api/v1/settings", json={
+        "settings": {
+            "organization_name": "ParkGuard Global HQ",
+            "timezone": "America/New_York",
+            "enforce_capacity_limits": "true"
+        }
+    }, headers=admin_headers)
+    assert update_res.status_code == 200
+    updated = update_res.json()
+    assert updated["settings"]["organization_name"] == "ParkGuard Global HQ"
+    assert updated["settings"]["timezone"] == "America/New_York"
+
+    # Verify staff cannot update settings (403 Forbidden)
+    staff_login = client.post("/api/v1/auth/login", json={
+        "email": "staff.test@parkguard.com",
+        "password": "NewStaffPassword2026!"
+    })
+    staff_token = staff_login.json()["access_token"]
+    staff_headers = {"Authorization": f"Bearer {staff_token}"}
+
+    staff_patch = client.patch("/api/v1/settings", json={
+        "settings": {
+            "organization_name": "Hacked HQ"
+        }
+    }, headers=staff_headers)
+    assert staff_patch.status_code == 403
+
+
+# 10. Vehicle Details Update Flow
+def test_vehicle_update_flow():
+    admin_login = client.post("/api/v1/auth/login", json={
+        "email": settings.INITIAL_ADMIN_EMAIL,
+        "password": settings.INITIAL_ADMIN_PASSWORD
+    })
+    headers = {"Authorization": f"Bearer {admin_login.json()['access_token']}"}
+
+    # Create a vehicle to update
+    create_res = client.post("/api/v1/vehicles", json={
+        "plate_number": "EDIT-9988",
+        "vehicle_type": "car",
+        "owner_name": "Initial Owner",
+        "owner_contact": "555-1234",
+        "make": "Honda",
+        "model": "Civic",
+        "color": "Silver",
+        "department_id": 1,
+        "notes": "Initial notes"
+    }, headers=headers)
+    assert create_res.status_code == 201
+    veh_id = create_res.json()["id"]
+
+    # Update vehicle
+    update_res = client.put(f"/api/v1/vehicles/{veh_id}", json={
+        "plate_number": "EDIT-9988",
+        "vehicle_type": "car",
+        "owner_name": "Updated Owner Name",
+        "owner_contact": "555-9999",
+        "make": "Honda",
+        "model": "Accord Touring",
+        "color": "Obsidian Blue",
+        "department_id": 1,
+        "notes": "Updated executive notes"
+    }, headers=headers)
+    assert update_res.status_code == 200
+    updated_veh = update_res.json()
+    assert updated_veh["owner_name"] == "Updated Owner Name"
+    assert updated_veh["model"] == "Accord Touring"
+    assert updated_veh["color"] == "Obsidian Blue"
+

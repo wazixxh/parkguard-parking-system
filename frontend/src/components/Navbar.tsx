@@ -15,7 +15,8 @@ import {
   LogOut, 
   WifiOff, 
   RefreshCw,
-  KeyRound
+  KeyRound,
+  Sliders
 } from 'lucide-react';
 import type { User } from '../types';
 
@@ -56,6 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       { id: 'staff', label: 'Staff Accounts', icon: Users },
       { id: 'zones', label: 'Zones & Depts', icon: Layers },
       { id: 'audit', label: 'Audit Trail', icon: History },
+      { id: 'settings', label: 'Settings', icon: Sliders },
     ] : []),
   ];
 

@@ -199,6 +199,16 @@ export const api = {
     document.body.appendChild(link);
     link.click();
     link.remove();
+  },
+
+  // System Settings (Super Admin)
+  getSettings: async (): Promise<{ settings: Record<string, string>; metadata: any }> => {
+    const res = await apiClient.get('/settings');
+    return res.data;
+  },
+  updateSettings: async (settings: Record<string, string>) => {
+    const res = await apiClient.patch('/settings', { settings });
+    return res.data;
   }
 };
 

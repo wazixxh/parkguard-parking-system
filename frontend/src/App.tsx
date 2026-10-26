@@ -15,6 +15,7 @@ import ReportsView from './pages/ReportsView';
 import StaffView from './pages/StaffView';
 import ZonesView from './pages/ZonesView';
 import AuditView from './pages/AuditView';
+import SettingsView from './pages/SettingsView';
 
 // Modals
 import LoginModal from './components/LoginModal';
@@ -215,6 +216,13 @@ export const App: React.FC = () => {
 
         {currentTab === 'audit' && (
           <AuditView
+            currentUser={currentUser}
+            onOpenLogin={() => setIsLoginOpen(true)}
+          />
+        )}
+
+        {currentTab === 'settings' && (
+          <SettingsView
             currentUser={currentUser}
             onOpenLogin={() => setIsLoginOpen(true)}
           />

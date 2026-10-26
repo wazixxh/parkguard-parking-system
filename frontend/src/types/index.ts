@@ -158,3 +158,24 @@ export interface PrintableCardData {
   qr_image_data_uri: string;
   registration_date: string;
 }
+
+export interface SystemSettings {
+  organization_name: string;
+  facility_location: string;
+  timezone: string;
+  enforce_capacity_limits: string;
+  default_grace_period_mins: string;
+  max_duration_hours: string;
+  require_phone_on_register: string;
+  auto_verify_scans: string;
+  [key: string]: string;
+}
+
+export interface SettingsResponse {
+  settings: SystemSettings;
+  metadata: {
+    total_configured: number;
+    timestamp: string;
+  };
+}
+

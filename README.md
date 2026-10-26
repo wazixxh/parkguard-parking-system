@@ -30,11 +30,22 @@ parkguard-parking-system/
 │   │   ├── schemas/              # Pydantic v2 request/response schemas with ConfigDict(from_attributes=True)
 │   │   ├── services/             # Business logic (bootstrap, audit trail, qrcode generation)
 │   │   └── main.py               # FastAPI lifespan & application entrypoint
-│   ├── tests/                    # Automated pytest test suite (14 passing tests)
+│   ├── tests/                    # Automated pytest test suite (17 passing tests)
+│   ├── scripts/                  # Administrator CLI utility (create_admin.py)
+│   ├── alembic/                  # Alembic database migrations environment
+│   ├── alembic.ini               # Alembic configuration
 │   ├── requirements.txt          # Python requirements
 │   ├── pytest.ini               # Pytest configuration
 │   └── .env.example              # Backend environment template
-├── docs/                         # Postman collection & environment documentation
+├── docs/                         # Detailed guides & Postman collection
+│   ├── PROJECT_OVERVIEW.md       # Architecture, roles, and design system
+│   ├── DATABASE_SCHEMA.md        # Relational models, ERD, and constraints
+│   ├── API_DOCUMENTATION.md      # Full REST API endpoints & payloads
+│   ├── SETUP_GUIDE.md            # Local installation & environment setup
+│   ├── TESTING_GUIDE.md          # Pytest suite & manual E2E verification
+│   ├── DEPLOYMENT_GUIDE.md       # Vercel, Python ASGI & PostgreSQL guide
+│   ├── ParkGuard_API_Postman_Collection.json
+│   └── ParkGuard_Postman_Environment.json
 ├── vercel.json                   # Root Vercel deployment configuration
 ├── .gitignore                    # Git ignore file for secrets, venvs, DBs, and build outputs
 └── README.md                     # Project master documentation
@@ -200,6 +211,8 @@ Upon first startup, the database is automatically created and seeded with defaul
 | | `GET` | `/api/v1/parking-areas` | Staff / Admin |
 | | `POST` | `/api/v1/parking-areas` | Super Admin |
 | **Audit** | `GET` | `/api/v1/audit` | Super Admin |
+| **Settings** | `GET` | `/api/v1/settings` | Staff / Admin |
+| | `PATCH`| `/api/v1/settings` | Super Admin |
 
 ---
 

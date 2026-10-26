@@ -7,6 +7,8 @@ from app.models.user import User
 from app.models.department import Department
 from app.models.parking_area import ParkingArea
 from app.models.audit_log import AuditLog
+from app.models.system_setting import SystemSetting
+
 
 
 def init_db(db: Session):
@@ -70,3 +72,20 @@ def init_db(db: Session):
         db.add_all(default_areas)
         db.commit()
         logger.info("Default parking areas seeded.")
+
+    # 4. Seed Default System Settings if empty
+    if db.query(SystemSetting).count() == 0:
+        default_settings = [
+            SystemSetting(setting_key="organization_name", setting_value="ParkGuard Campus Facilities", description="Organization name displayed on cards and headers"),
+            SystemSetting(setting_key="facility_location", setting_value="Main Campus & Corporate Center", description="Facility site or campus location"),
+            SystemSetting(setting_key="timezone", setting_value="UTC", description="System reference timezone"),
+            SystemSetting(setting_key="enforce_capacity_limits", setting_value="true", description="Reject entry when zone capacity is reached"),
+            SystemSetting(setting_key="default_grace_period_mins", setting_value="15", description="Grace period before overstay flags"),
+            SystemSetting(setting_key="max_duration_hours", setting_value="24", description="Maximum continuous parking duration permitted"),
+            SystemSetting(setting_key="require_phone_on_register", setting_value="false", description="Make driver phone number mandatory on vehicle registration"),
+            SystemSetting(setting_key="auto_verify_scans", setting_value="true", description="Automatically verify and display live vehicle permit status upon scan"),
+        ]
+        db.add_all(default_settings)
+        db.commit()
+        logger.info("Default system settings seeded.")
+

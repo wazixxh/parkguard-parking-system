@@ -7,6 +7,7 @@ from app.models.parking_transaction import ParkingTransaction
 from app.models.scan_event import ScanEvent
 from app.models.incident import Incident
 from app.models.audit_log import AuditLog
+from app.models.system_setting import SystemSetting
 
 __all__ = [
     "Base",
@@ -18,4 +19,6 @@ __all__ = [
     "ScanEvent",
     "Incident",
     "AuditLog",
+    "SystemSetting",
 ]
+
