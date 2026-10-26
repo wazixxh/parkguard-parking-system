@@ -272,3 +272,43 @@ def test_dashboard_and_csv_export():
     assert csv_res.status_code == 200
     assert "text/csv" in csv_res.headers["content-type"]
     assert "Internal ID" in csv_res.text
+
+    # CSV Export via token query param (browser direct download)
+    token = admin_login.json()["access_token"]
+    direct_csv = client.get(f"/api/v1/reports/export-csv?report_type=vehicles&token={token}")
+    assert direct_csv.status_code == 200
+    assert "text/csv" in direct_csv.headers["content-type"]
+
+
+# 8. Password Change Workflow
+def test_password_change_flow():
+    staff_login = client.post("/api/v1/auth/login", json={
+        "email": "staff.test@parkguard.com",
+        "password": "StaffPassword2026!"
+    })
+    token = staff_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Change password
+    new_pwd = "NewStaffPassword2026!"
+    change_res = client.post("/api/v1/auth/change-password", json={
+        "current_password": "StaffPassword2026!",
+        "new_password": new_pwd
+    }, headers=headers)
+    assert change_res.status_code == 200
+    assert change_res.json()["success"] is True
+
+    # Old password should now fail
+    old_login = client.post("/api/v1/auth/login", json={
+        "email": "staff.test@parkguard.com",
+        "password": "StaffPassword2026!"
+    })
+    assert old_login.status_code == 401
+
+    # New password should succeed
+    new_login = client.post("/api/v1/auth/login", json={
+        "email": "staff.test@parkguard.com",
+        "password": new_pwd
+    })
+    assert new_login.status_code == 200
+

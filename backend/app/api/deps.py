@@ -10,18 +10,24 @@ security_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
+    request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
     db: Session = Depends(get_db)
 ) -> User:
-    """Validate Bearer token and retrieve authenticated user."""
-    if not credentials:
+    """Validate Bearer token or token query param and retrieve authenticated user."""
+    token = None
+    if credentials:
+        token = credentials.credentials
+    elif "token" in request.query_params and request.query_params["token"].strip():
+        token = request.query_params["token"].strip()
+
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication token is missing.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    token = credentials.credentials
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(

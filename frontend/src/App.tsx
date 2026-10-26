@@ -23,6 +23,7 @@ import RecordEntryModal from './components/RecordEntryModal';
 import ReportIncidentModal from './components/ReportIncidentModal';
 import AddStaffModal from './components/AddStaffModal';
 import PrintableCardModal from './components/PrintableCardModal';
+import ChangePasswordModal from './components/ChangePasswordModal';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
   const [isIncidentOpen, setIsIncidentOpen] = useState<boolean>(false);
   const [isAddStaffOpen, setIsAddStaffOpen] = useState<boolean>(false);
   const [isPrintCardOpen, setIsPrintCardOpen] = useState<boolean>(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState<boolean>(false);
   const [printableCard, setPrintableCard] = useState<PrintableCardData | null>(null);
 
   // Pre-filled modal contexts
@@ -134,6 +136,7 @@ export const App: React.FC = () => {
         currentUser={currentUser}
         onOpenLogin={() => setIsLoginOpen(true)}
         onLogout={handleLogout}
+        onOpenChangePassword={() => setIsChangePasswordOpen(true)}
         apiOnline={apiOnline}
         apiLatency={apiLatency}
         onRefreshHealth={checkHealth}
@@ -280,6 +283,11 @@ export const App: React.FC = () => {
           setIsPrintCardOpen(false);
           setPrintableCard(null);
         }}
+      />
+
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
       />
     </div>
   );

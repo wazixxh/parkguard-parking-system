@@ -14,7 +14,8 @@ import {
   LogIn, 
   LogOut, 
   WifiOff, 
-  RefreshCw
+  RefreshCw,
+  KeyRound
 } from 'lucide-react';
 import type { User } from '../types';
 
@@ -24,6 +25,7 @@ interface NavbarProps {
   currentUser: User | null;
   onOpenLogin: () => void;
   onLogout: () => void;
+  onOpenChangePassword?: () => void;
   apiOnline: boolean;
   apiLatency: number | null;
   onRefreshHealth: () => void;
@@ -35,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentUser,
   onOpenLogin,
   onLogout,
+  onOpenChangePassword,
   apiOnline,
   apiLatency,
   onRefreshHealth,
@@ -120,6 +123,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {isSuperAdmin ? 'Super Administrator' : 'Parking Staff'}
                   </span>
                 </div>
+                <button
+                  onClick={onOpenChangePassword}
+                  title="Change Password"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#181926] hover:bg-[#25283d] border border-[#25283d] text-slate-300 hover:text-white text-xs font-medium transition-all"
+                >
+                  <KeyRound className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="hidden sm:inline">Password</span>
+                </button>
                 <button
                   onClick={onLogout}
                   title="Sign Out"

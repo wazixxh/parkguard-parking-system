@@ -6,10 +6,12 @@ import {
   Printer, 
   Key, 
   XCircle, 
-  RefreshCw
+  RefreshCw,
+  Edit3
 } from 'lucide-react';
 import { api } from '../services/api';
 import type { Vehicle } from '../types';
+import EditVehicleModal from '../components/EditVehicleModal';
 
 interface VehiclesViewProps {
   onOpenRegister: () => void;
@@ -29,6 +31,8 @@ export const VehiclesView: React.FC<VehiclesViewProps> = ({
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [selectedVehicleForEdit, setSelectedVehicleForEdit] = useState<Vehicle | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     loadVehicles();
@@ -252,6 +256,16 @@ export const VehiclesView: React.FC<VehiclesViewProps> = ({
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
+                          onClick={() => {
+                            setSelectedVehicleForEdit(v);
+                            setIsEditModalOpen(true);
+                          }}
+                          title="Edit Vehicle Details"
+                          className="p-1.5 rounded-lg bg-[#181926] hover:bg-[#25283d] text-slate-300 hover:text-white border border-[#25283d] transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
                           onClick={() => onOpenPrintCard(v.id)}
                           title="Print Vehicle Pass Card"
                           className="p-1.5 rounded-lg bg-[#181926] hover:bg-[#25283d] text-purple-300 hover:text-white border border-[#25283d] transition-colors"
@@ -313,6 +327,20 @@ export const VehiclesView: React.FC<VehiclesViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Edit Vehicle Modal */}
+      <EditVehicleModal
+        isOpen={isEditModalOpen}
+        vehicle={selectedVehicleForEdit}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedVehicleForEdit(null);
+        }}
+        onSuccess={(updated) => {
+          setActionMessage(`Vehicle ${updated.plate_number} updated successfully.`);
+          loadVehicles();
+        }}
+      />
     </div>
   );
 };
