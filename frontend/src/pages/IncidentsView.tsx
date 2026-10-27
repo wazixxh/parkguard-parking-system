@@ -14,11 +14,7 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({ onOpenReportIncide
   const [resolvingId, setResolvingId] = useState<number | null>(null);
   const [resolutionNotes, setResolutionNotes] = useState('');
 
-  useEffect(() => {
-    loadIncidents();
-  }, [statusFilter]);
-
-  const loadIncidents = async () => {
+  const loadIncidents = React.useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getIncidents({ status: statusFilter || undefined });
@@ -28,7 +24,11 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({ onOpenReportIncide
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
+
+  useEffect(() => {
+    loadIncidents();
+  }, [loadIncidents]);
 
   const handleResolve = async (id: number) => {
     if (!resolutionNotes.trim()) {

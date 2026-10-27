@@ -34,11 +34,7 @@ export const VehiclesView: React.FC<VehiclesViewProps> = ({
   const [selectedVehicleForEdit, setSelectedVehicleForEdit] = useState<Vehicle | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadVehicles();
-  }, [page, vehicleType, statusFilter]);
-
-  const loadVehicles = async () => {
+  const loadVehicles = React.useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getVehicles({
@@ -55,7 +51,11 @@ export const VehiclesView: React.FC<VehiclesViewProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, search, vehicleType, statusFilter]);
+
+  useEffect(() => {
+    loadVehicles();
+  }, [loadVehicles]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

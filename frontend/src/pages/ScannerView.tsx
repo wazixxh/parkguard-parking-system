@@ -37,12 +37,17 @@ export const ScannerView: React.FC<ScannerViewProps> = ({
 
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  useEffect(() => {
-    loadScanHistory();
-    return () => {
-      stopCameraScanner();
-    };
-  }, []);
+  const stopCameraScanner = () => {
+    if (scannerRef.current) {
+      try {
+        scannerRef.current.clear();
+      } catch {
+        // ignore clear error
+      }
+      scannerRef.current = null;
+    }
+    setIsCameraActive(false);
+  };
 
   const loadScanHistory = async () => {
     try {
@@ -52,6 +57,13 @@ export const ScannerView: React.FC<ScannerViewProps> = ({
       console.warn("Could not load scan history", err);
     }
   };
+
+  useEffect(() => {
+    loadScanHistory();
+    return () => {
+      stopCameraScanner();
+    };
+  }, []);
 
   const handleValidation = async (tokenString: string, type: string = 'manual') => {
     if (!tokenString.trim()) return;
@@ -97,7 +109,11 @@ export const ScannerView: React.FC<ScannerViewProps> = ({
             handleValidation(decodedText, 'qr');
             scanner.pause(true);
             setTimeout(() => {
-              try { scanner.resume(); } catch (e) {}
+              try { 
+                scanner.resume(); 
+              } catch {
+                // ignore resume error
+              }
             }, 3000);
           },
           () => {
@@ -106,23 +122,13 @@ export const ScannerView: React.FC<ScannerViewProps> = ({
         );
 
         scannerRef.current = scanner;
-      } catch (err: any) {
+      } catch {
         setCameraError(
           'Unable to access camera. Please allow camera permissions or use manual license plate search below.'
         );
         setIsCameraActive(false);
       }
     }, 200);
-  };
-
-  const stopCameraScanner = () => {
-    if (scannerRef.current) {
-      try {
-        scannerRef.current.clear();
-      } catch (e) {}
-      scannerRef.current = null;
-    }
-    setIsCameraActive(false);
   };
 
   const handleRecordEntry = async () => {

@@ -22,13 +22,7 @@ export const ParkingView: React.FC<ParkingViewProps> = ({ onOpenEntry }) => {
   const [loading, setLoading] = useState(false);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadParkedVehicles();
-    const interval = setInterval(loadParkedVehicles, 20000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadParkedVehicles = async () => {
+  const loadParkedVehicles = React.useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getCurrentlyParked({
@@ -42,7 +36,13 @@ export const ParkingView: React.FC<ParkingViewProps> = ({ onOpenEntry }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
+
+  useEffect(() => {
+    loadParkedVehicles();
+    const interval = setInterval(loadParkedVehicles, 20000);
+    return () => clearInterval(interval);
+  }, [loadParkedVehicles]);
 
   const handleRecordExit = async (txn: ParkingTransaction) => {
     if (!window.confirm(`Confirm vehicle exit for ${txn.plate_number}?`)) return;

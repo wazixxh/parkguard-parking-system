@@ -12,11 +12,7 @@ export const TransactionsView: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadTransactions();
-  }, [page, statusFilter]);
-
-  const loadTransactions = async () => {
+  const loadTransactions = React.useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getTransactions({
@@ -32,7 +28,11 @@ export const TransactionsView: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, search, statusFilter]);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

@@ -33,25 +33,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchStats = async () => {
+  const fetchStats = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await api.getDashboardStats();
       setStats(data);
-    } catch (err: any) {
+    } catch {
       setError('Failed to load dashboard metrics. Reconnecting...');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStats();
     // Auto refresh every 30s
     const timer = setInterval(fetchStats, 30000);
     return () => clearInterval(timer);
-  }, []);
+  }, [fetchStats]);
 
   return (
     <div className="space-y-6">
